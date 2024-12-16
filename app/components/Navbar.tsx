@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
+import { auth, signIn, signOut } from "@/auth";
 
-const Navbar = () => {
+const Navbar = async () => {
+    const session = await auth()
 
     return(
 
@@ -10,6 +12,34 @@ const Navbar = () => {
                 <Link href="/">
                     <Image src ="/logo.png" alt="logo" width={144} height={30} />
                 </Link>
+
+                <div className="flex items-center gap-5 text-black" >
+                    {session && session?.user ?(
+                        <>
+                        <link href="/startup/create"> 
+                        <span>Create</span>
+                        </link>
+
+                        <button onClick={signOut}>
+                            <span>Logout</span>
+                        </button>
+
+                        <link href={'/user/${session?.id}'}>
+                        <span>{session?.user?.name}</span>
+                        </link>
+                        </>
+                    ):(
+                        <form action={ async () => { 
+                            "use server";
+
+                            await signIn( provider:  'github');
+                            }}>
+
+                                <button type="submit">Login</button>
+                            
+                            </form>
+                    )}
+                </div>
 
             </nav>  
         </header>
